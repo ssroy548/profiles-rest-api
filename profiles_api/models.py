@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
+from django.conf import settings
 
 
 class UserProfileManager(BaseUserManager):
@@ -63,17 +64,27 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
         """
         Required function so Django knows what to use as the users full name.
         """
-
-        self.name
+        return self.name
 
     def get_short_name(self):
         """
         Required function so Django knows what to use as the users short name.
         """
-
-        self.name
+        return self.name
 
     def __str__(self):
         """What to show when we output an object as a string."""
 
         return self.email
+
+
+class ProfileFeedItem(models.Model):
+    user_profile = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete= models.CASCADE
+    )
+    status_text = models.CharField(max_length=255)
+    created_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.status_text
